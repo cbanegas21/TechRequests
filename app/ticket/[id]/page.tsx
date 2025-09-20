@@ -38,6 +38,16 @@ export default function TicketPage({ params }: TicketPageProps) {
         const comments = mockDb.comments.filter((c) => c.ticketId === foundTicket.id)
         const auditLogs = mockDb.auditLogs.filter((a) => a.ticketId === foundTicket.id)
 
+        if (
+          user?.role === "csp" &&
+          foundTicket.requesterEmail &&
+          foundTicket.requesterEmail.toLowerCase() !== (user.email || "").toLowerCase()
+        ) {
+          setTicket(null)
+          setLoading(false)
+          return
+        }
+
         setTicket({
           ...foundTicket,
           requester,

@@ -1,7 +1,15 @@
+"use server"
+export const runtime = "nodejs"
+
 import { prisma } from "@/lib/db"
 import { revalidatePath } from "next/cache"
+import { getCurrentUser, isAdminOrAgent } from "@/lib/auth-lite"
 
 export async function moveTicket(ticketId: string, newStatus: string) {
+  if (!isAdminOrAgent()) {
+    return { success: false, error: "Unauthorized" }
+  }
+
   try {
     const ticket = await prisma.ticket.findUnique({
       where: { id: ticketId },
@@ -60,6 +68,11 @@ export async function getFilteredTickets(filters: {
 }) {
   try {
     const where: any = {}
+
+    const u = getCurrentUser()
+    if (u?.role === "csp") {
+      where.requesterEmail = u.email
+    }
 
     if (filters.search) {
       where.OR = [

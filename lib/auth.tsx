@@ -10,6 +10,7 @@ interface User {
   email: string
   image?: string
   isAgent: boolean
+  role?: string
 }
 
 interface AuthContextType {
@@ -42,6 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
               email: currentUser.email,
               image: currentUser.image,
               isAgent: currentUser.role === "agent",
+              role: currentUser.role,
             }
             localStorage.setItem("user", JSON.stringify(updatedUser))
             setUser(updatedUser)
@@ -74,6 +76,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           email: existingUser.email,
           image: existingUser.image,
           isAgent: existingUser.role === "agent",
+          role: existingUser.role,
         }
 
         localStorage.setItem("user", JSON.stringify(userSession))
@@ -103,4 +106,17 @@ export function useAuth() {
     throw new Error("useAuth must be used within an AuthProvider")
   }
   return context
+}
+
+export function getCurrentUser() {
+  if (typeof window === "undefined") return null
+
+  const storedUser = localStorage.getItem("user")
+  if (!storedUser) return null
+
+  try {
+    return JSON.parse(storedUser)
+  } catch {
+    return null
+  }
 }

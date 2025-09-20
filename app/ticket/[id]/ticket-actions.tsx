@@ -53,8 +53,7 @@ export function TicketActions({ ticket, agents, comments = [], onUpdate }: Ticke
   const { toast } = useToast()
   const { isAgent, user } = useAuth()
 
-  // If not an agent, don't show the actions card
-  if (!isAgent) {
+  if (!isAgent || user?.role === "csp") {
     return null
   }
 

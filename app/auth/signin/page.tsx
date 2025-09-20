@@ -6,30 +6,27 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { useAuth } from "@/lib/auth"
+import { signinAction } from "./actions"
 
 export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
-  const [showPassword, setShowPassword] = useState(false) // Added password visibility toggle state
+  const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState("")
-  const { login } = useAuth()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError("")
 
-    if (password !== "Password1") {
-      setError("Invalid password. Use 'Password1'")
-      setIsLoading(false)
-      return
-    }
+    const formData = new FormData()
+    formData.append("email", email)
+    formData.append("password", password)
 
-    const success = await login(email)
-    if (!success) {
-      setError("Email not found in system. Contact an admin to add your account.")
+    const result = await signinAction(null, formData)
+    if (result?.error) {
+      setError(result.error)
     }
     setIsLoading(false)
   }

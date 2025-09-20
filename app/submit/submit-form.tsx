@@ -111,11 +111,6 @@ export function SubmitForm({ users }: SubmitFormProps) {
 
       // Call the server action - it will handle the redirect
       await submitTicket(formData)
-
-      // This code should not execute if redirect works properly
-      // But if it does, reset the form and show success
-      resetForm()
-      setIsSubmitting(false)
     } catch (error) {
       console.error("[v0] Submit error:", error)
       toast({
@@ -123,6 +118,7 @@ export function SubmitForm({ users }: SubmitFormProps) {
         description: "Failed to submit ticket. Please try again.",
         variant: "destructive",
       })
+    } finally {
       setIsSubmitting(false)
     }
   }
